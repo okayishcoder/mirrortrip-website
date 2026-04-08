@@ -14,6 +14,7 @@
       if (
         (page === 'home' && href === 'index.html') ||
         (page === 'privacy' && href === 'privacy.html') ||
+        (page === 'terms' && href === 'terms.html') ||
         (page === 'support' && href === 'support.html') ||
         (page === 'delete' && href === 'delete-account.html')
       ) {
@@ -37,3 +38,6 @@
     });
   }
 })();
+
+
+
