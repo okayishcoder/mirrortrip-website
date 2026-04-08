@@ -161,8 +161,8 @@ h3 {
 }
 
 .brand__mark {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 4rem;
+  height: 4rem;
   object-fit: contain;
 }
 
@@ -628,6 +628,11 @@ h3 {
 @media (max-width: 760px) {
   .site-header__inner {
     min-height: 4.5rem;
+  }
+
+  .brand__mark {
+    width: 3.25rem;
+    height: 3.25rem;
   }
 
   .nav-toggle {
