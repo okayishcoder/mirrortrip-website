@@ -1,206 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror Trip | Plan It, Live It, Remember It</title>
-  <meta name="description" content="Mirror Trip helps you plan trips your way, from rough ideas to detailed itineraries, then turn every journey into a living record with notes, photos, memories, and shareable guides.">
-  <meta name="theme-color" content="#219EBC">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Mirror Trip">
-  <meta property="og:description" content="Plan trips your way, keep every detail in one place, and turn each journey into a living travel record you can revisit or share.">
-  <meta property="og:image" content="assets/mt.png">
-  <meta property="og:url" content="./">
-  <link rel="icon" href="assets/favicon.png?v=20260408" type="image/png" sizes="64x64">
-  <link rel="shortcut icon" href="assets/favicon.png?v=20260408" type="image/png">
-  <link rel="apple-touch-icon" href="assets/favicon.png?v=20260408">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body data-page="home">
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <header class="site-header">
-    <div class="shell site-header__inner">
-      <a class="brand" href="index.html" aria-label="Mirror Trip home">
-        <img src="assets/mt.png" alt="Mirror Trip logo" class="brand__mark">
-        <span class="brand__text">Mirror Trip</span>
-      </a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-        <span class="nav-toggle__line"></span>
-        <span class="nav-toggle__line"></span>
-        <span class="nav-toggle__line"></span>
-        <span class="sr-only">Toggle navigation</span>
-      </button>
-      <nav id="site-nav" class="site-nav" aria-label="Primary">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="support.html">Support</a>
-        <a href="delete-account.html">Delete Account</a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="main-content">
-    <section class="hero">
-      <div class="shell hero__inner">
-        <div class="hero__content">
-          <p class="eyebrow">Mirror Trip Mobile App</p>
-          <h1>Plan it your way. Travel it for real. Keep it forever.</h1>
-          <p class="hero__lede">
-            Mirror Trip helps you go from rough trip ideas to fully detailed itineraries, then turns every journey into a living travel record with notes, photos, memories, and shareable guides.
-          </p>
-          <div class="hero__actions">
-            <a class="button button--primary" href="support.html">Get Support</a>
-            <a class="button button--secondary" href="privacy.html">Read Privacy Policy</a>
-            <a class="button button--secondary" href="terms.html">Read Terms</a>
-          </div>
-          <ul class="hero__trust-list" aria-label="Product highlights">
-            <li>Plan loosely or down to each day</li>
-            <li>Keep updating trips as they happen</li>
-            <li>Publish finished trips as guides</li>
-          </ul>
-        </div>
-        <div class="hero__visual" aria-hidden="true">
-          <div class="device-card">
-            <div class="device-card__header">
-              <span class="device-card__pill">Flexible Planning</span>
-              <span class="device-card__status">Trip to Memory</span>
-            </div>
-            <div class="device-card__grid">
-              <article class="mini-card">
-                <h2>Destinations</h2>
-                <p>Map your route from first idea to final stop.</p>
-              </article>
-              <article class="mini-card">
-                <h2>Activities</h2>
-                <p>Build each day with plans, places, and notes.</p>
-              </article>
-              <article class="mini-card">
-                <h2>Memories</h2>
-                <p>Add real updates, photos, and useful details on the go.</p>
-              </article>
-              <article class="mini-card">
-                <h2>Published Guides</h2>
-                <p>Share trips others can save, explore, and learn from.</p>
-              </article>
-            </div>
-          </div>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mirror Trip | Plan It, Live It, Remember It</title>
+    <meta
+      name="description"
+      content="Mirror Trip helps you plan trips your way, from rough ideas to detailed itineraries, then turn every journey into a living record with notes, photos, memories, and shareable guides."
+    />
+    <meta name="theme-color" content="#219EBC" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mirror Trip" />
+    <meta
+      property="og:description"
+      content="Plan trips your way, keep every detail in one place, and turn each journey into a living travel record you can revisit or share."
+    />
+    <meta property="og:image" content="assets/mt.png" />
+    <meta property="og:url" content="./" />
+    <link rel="icon" href="assets/favicon.png?v=20260408" type="image/png" sizes="64x64" />
+    <link rel="shortcut icon" href="assets/favicon.png?v=20260408" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260408" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="home">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="index.html" aria-label="Mirror Trip home">
+          <img src="assets/mt.png" alt="Mirror Trip logo" class="brand__mark" />
+          <span class="brand__text">Mirror Trip</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="support.html">Support</a>
+          <a href="delete-account.html">Delete Account</a>
+        </nav>
       </div>
-    </section>
+    </header>
 
-    <section class="section section--raised">
-      <div class="shell">
-        <div class="section-heading">
-          <p class="eyebrow">What Mirror Trip Does</p>
-          <h2>More than a trip planner. It is where your journey keeps evolving.</h2>
-          <p>
-            Start simple with a rough outline or go deep with a full itinerary. Mirror Trip keeps your plans, live updates, and completed journeys together so every trip stays useful before, during, and after travel.
-          </p>
+    <main id="main-content">
+      <section class="hero">
+        <div class="shell hero__inner">
+          <div class="hero__content">
+            <p class="eyebrow">Mirror Trip Mobile App</p>
+            <h1>Plan it your way. Travel it for real. Keep it forever.</h1>
+            <p class="hero__lede">
+              Mirror Trip helps you go from rough trip ideas to fully detailed itineraries, then turns every journey
+              into a living travel record with notes, photos, memories, and shareable guides.
+            </p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="support.html">Get Support</a>
+              <a class="button button--secondary" href="privacy.html">Read Privacy Policy</a>
+              <a class="button button--secondary" href="terms.html">Read Terms</a>
+            </div>
+            <ul class="hero__trust-list" aria-label="Product highlights">
+              <li>Plan loosely or down to each day.</li>
+              <li>Keep updating trips as they happen.</li>
+              <li>Publish finished trips as guides.</li>
+            </ul>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <div class="device-card">
+              <div class="device-card__header">
+                <span class="device-card__pill">Flexible Planning</span>
+                <span class="device-card__status">Trip to Memory</span>
+              </div>
+              <div class="device-card__grid">
+                <article class="mini-card">
+                  <h2>Destinations</h2>
+                  <p>Map your route from first idea to final stop.</p>
+                </article>
+                <article class="mini-card">
+                  <h2>Activities</h2>
+                  <p>Build each day with plans, places, and notes.</p>
+                </article>
+                <article class="mini-card">
+                  <h2>Memories</h2>
+                  <p>Add real updates, photos, and useful details on the go.</p>
+                </article>
+                <article class="mini-card">
+                  <h2>Published Guides</h2>
+                  <p>Share trips others can save, explore, and learn from.</p>
+                </article>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <h3>Plan from rough to detailed</h3>
-            <p>Start with destinations, dates, travellers, and notes, then build day by day with travel segments, activities, locations, costs, and personal details.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Turn plans into living records</h3>
-            <p>Keep updating your trip as it happens so the original plan becomes a real record of where you went, what you did, and what mattered most.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Keep your full travel life together</h3>
-            <p>Organize future plans, active trips, and completed journeys in one place that is easy to revisit, relive, and reuse for the next adventure.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Share guides worth saving</h3>
-            <p>Publish completed trips with routes, highlights, notes, and practical insights so other travelers can get inspired and add them to their wishlist.</p>
-          </article>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section">
-      <div class="shell split-panel">
+      <section class="section section--raised">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">What Mirror Trip Does</p>
+            <h2>More than a trip planner. It is where your journey keeps evolving.</h2>
+            <p>
+              Start simple with a rough outline or go deep with a full itinerary. Mirror Trip keeps your plans, live
+              updates, and completed journeys together so every trip stays useful before, during, and after travel.
+            </p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Plan from rough to detailed</h3>
+              <p>
+                Start with destinations, dates, travellers, and notes, then build day by day with travel segments,
+                activities, locations, costs, and personal details.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Turn plans into living records</h3>
+              <p>
+                Keep updating your trip as it happens so the original plan becomes a real record of where you went, what
+                you did, and what mattered most.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Keep your full travel life together</h3>
+              <p>
+                Organize future plans, active trips, and completed journeys in one place that is easy to revisit,
+                relive, and reuse for the next adventure.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Share guides worth saving</h3>
+              <p>
+                Publish completed trips with routes, highlights, notes, and practical insights so other travelers can
+                get inspired and add them to their wishlist.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="shell split-panel">
+          <div>
+            <p class="eyebrow">Why Mirror Trip</p>
+            <h2>Built for planning smarter, traveling better, and remembering more.</h2>
+            <p>
+              Mirror Trip is designed for travelers who want flexibility. Keep a trip high level when you are still
+              figuring things out, then add structure and detail when you are ready to lock it in.
+            </p>
+            <p class="muted">
+              When the journey is over, your trip is not just done. It becomes a searchable, photo-filled memory you can
+              revisit yourself or publish to help someone plan theirs.
+            </p>
+          </div>
+          <div class="trust-panel">
+            <div class="trust-panel__item">
+              <strong>Flexible by design</strong>
+              <span>Plan loosely at first or build a complete itinerary when details matter.</span>
+            </div>
+            <div class="trust-panel__item">
+              <strong>Useful during the trip</strong>
+              <span>Update routes, notes, costs, and photos as travel unfolds in real time.</span>
+            </div>
+            <div class="trust-panel__item">
+              <strong>Valuable after the trip</strong>
+              <span>Revisit memories or publish your trip as a guide others can discover.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--soft">
+        <div class="shell">
+          <div class="section-heading section-heading--compact">
+            <p class="eyebrow">Quick Links</p>
+            <h2>Support, privacy, and account help in one place.</h2>
+          </div>
+          <div class="link-cards">
+            <a class="link-card" href="privacy.html">
+              <h3>Privacy Policy</h3>
+              <p>Read the current policy and data handling details.</p>
+            </a>
+            <a class="link-card" href="terms.html">
+              <h3>Terms of Service</h3>
+              <p>Review the current terms governing use of the Mirror Trip service.</p>
+            </a>
+            <a class="link-card" href="support.html">
+              <h3>Support</h3>
+              <p>Contact support for account help, bugs, privacy requests, or restoration questions.</p>
+            </a>
+            <a class="link-card" href="delete-account.html">
+              <h3>Delete Account</h3>
+              <p>Review the in-app deletion flow, suspension timing, grace period, and restoration process.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
         <div>
-          <p class="eyebrow">Why Mirror Trip</p>
-          <h2>Built for planning smarter, traveling better, and remembering more.</h2>
-          <p>
-            Mirror Trip is designed for travelers who want flexibility. Keep a trip high level when you are still figuring things out, then add structure and detail when you are ready to lock it in.
-          </p>
-          <p class="muted">
-            When the journey is over, your trip is not just done. It becomes a searchable, photo-filled memory you can revisit yourself or publish to help someone plan theirs.
-          </p>
+          <p class="site-footer__brand">Mirror Trip</p>
+          <p class="site-footer__copy">Plan smarter, travel better, remember more.</p>
         </div>
-        <div class="trust-panel">
-          <div class="trust-panel__item">
-            <strong>Flexible by design</strong>
-            <span>Plan loosely at first or build a complete itinerary when details matter.</span>
-          </div>
-          <div class="trust-panel__item">
-            <strong>Useful during the trip</strong>
-            <span>Update routes, notes, costs, and photos as travel unfolds in real time.</span>
-          </div>
-          <div class="trust-panel__item">
-            <strong>Valuable after the trip</strong>
-            <span>Revisit memories or publish your trip as a guide others can discover.</span>
-          </div>
+        <div class="site-footer__links">
+          <a href="mailto:support@mirrortrips.com">support@mirrortrips.com</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="support.html">Support</a>
+          <a href="delete-account.html">Delete Account</a>
         </div>
       </div>
-    </section>
+      <div class="shell site-footer__meta">
+        <p>&copy; <span id="current-year"></span> Mirror Trip</p>
+      </div>
+    </footer>
 
-    <section class="section section--soft">
-      <div class="shell">
-        <div class="section-heading section-heading--compact">
-          <p class="eyebrow">Quick Links</p>
-          <h2>Support, privacy, and account help in one place.</h2>
-        </div>
-        <div class="link-cards">
-          <a class="link-card" href="privacy.html">
-            <h3>Privacy Policy</h3>
-            <p>Read the current policy and data handling details.</p>
-          </a>
-          <a class="link-card" href="terms.html">
-            <h3>Terms of Service</h3>
-            <p>Review the current terms governing use of the Mirror Trip service.</p>
-          </a>
-          <a class="link-card" href="support.html">
-            <h3>Support</h3>
-            <p>Contact support for account help, bugs, privacy requests, or restoration questions.</p>
-          </a>
-          <a class="link-card" href="delete-account.html">
-            <h3>Delete Account</h3>
-            <p>Review the in-app deletion flow, suspension timing, grace period, and restoration process.</p>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="shell site-footer__inner">
-      <div>
-        <p class="site-footer__brand">Mirror Trip</p>
-        <p class="site-footer__copy">Plan smarter, travel better, remember more.</p>
-      </div>
-      <div class="site-footer__links">
-        <a href="mailto:support@mirrortrips.com">support@mirrortrips.com</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="support.html">Support</a>
-        <a href="delete-account.html">Delete Account</a>
-      </div>
-    </div>
-    <div class="shell site-footer__meta">
-      <p>&copy; <span id="current-year"></span> Mirror Trip</p>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
-
-
-
