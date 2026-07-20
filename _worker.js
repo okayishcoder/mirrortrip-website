@@ -60,16 +60,6 @@ function missingConfigResponse(names) {
   );
 }
 
-function redirectResponse(location) {
-  return new Response(null, {
-    status: 301,
-    headers: {
-      Location: location,
-      'Cache-Control': 'public, max-age=3600',
-    },
-  });
-}
-
 function appleAssociation(env) {
   const missing = ['APPLE_TEAM_ID', 'IOS_BUNDLE_ID'].filter((name) => !env[name]);
   if (missing.length) return missingConfigResponse(missing);
@@ -239,14 +229,6 @@ function tripFallback(request, env, shareId) {
 
 export async function handleRequest(request, env) {
   const url = new URL(request.url);
-
-  if (url.pathname === '/privacy' || url.pathname === '/privacy/') {
-    return redirectResponse('/privacy.html');
-  }
-
-  if (url.pathname === '/terms' || url.pathname === '/terms/') {
-    return redirectResponse('/terms.html');
-  }
 
   if (url.pathname === '/.well-known/apple-app-site-association') {
     return appleAssociation(env);
