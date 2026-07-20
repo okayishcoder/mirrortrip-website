@@ -101,6 +101,16 @@ test('association files report missing deployment configuration without redirect
   assert.equal(appleResponse.headers.get('location'), null);
 });
 
+test('legacy legal folder routes redirect to canonical html pages', async () => {
+  const privacyResponse = await handleRequest(request('/privacy/'), config);
+  const termsResponse = await handleRequest(request('/terms'), config);
+
+  assert.equal(privacyResponse.status, 301);
+  assert.equal(privacyResponse.headers.get('location'), '/privacy.html');
+  assert.equal(termsResponse.status, 301);
+  assert.equal(termsResponse.headers.get('location'), '/terms.html');
+});
+
 test('unknown routes retain static-host behavior', async () => {
   const response = await handleRequest(request('/privacy.html'), config);
 
