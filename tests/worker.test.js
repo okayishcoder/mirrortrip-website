@@ -1,7 +1,59 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-import { handleRequest } from '../_worker.js';
+import { handleRequest } from '../public/_worker.js';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const publicRoot = path.join(root, 'public');
+const contentTypes = new Map([
+  ['.css', 'text/css; charset=utf-8'],
+  ['.html', 'text/html; charset=utf-8'],
+  ['.js', 'text/javascript; charset=utf-8'],
+  ['.png', 'image/png'],
+]);
+
+async function fetchStaticAsset(request) {
+  const url = new URL(request.url);
+  let pathname;
+  try {
+    pathname = decodeURIComponent(url.pathname);
+  } catch {
+    return new Response('Not Found', { status: 404 });
+  }
+
+  if (pathname === '/index.html') {
+    return Response.redirect(`${url.origin}/`, 308);
+  }
+
+  if (/^\/[^/]+\.html$/.test(pathname)) {
+    return Response.redirect(`${url.origin}${pathname.slice(0, -5)}`, 308);
+  }
+
+  const relativePath = pathname === '/'
+    ? 'index.html'
+    : pathname.slice(1).includes('.')
+      ? pathname.slice(1)
+      : `${pathname.slice(1)}.html`;
+  const resolvedPath = path.resolve(publicRoot, relativePath);
+  if (!resolvedPath.startsWith(`${publicRoot}${path.sep}`)) {
+    return new Response('Not Found', { status: 404 });
+  }
+
+  try {
+    const body = await readFile(resolvedPath);
+    const contentType = contentTypes.get(path.extname(resolvedPath));
+    return new Response(body, {
+      status: 200,
+      headers: contentType ? { 'Content-Type': contentType } : undefined,
+    });
+  } catch (error) {
+    if (error.code === 'ENOENT') return new Response('Not Found', { status: 404 });
+    throw error;
+  }
+}
 
 const config = {
   SHARE_DOMAIN: 'mirrortrips.com',
@@ -13,7 +65,7 @@ const config = {
   ANDROID_SHA256_FINGERPRINT:
     'AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99',
   ASSETS: {
-    fetch: async () => new Response('static asset', { status: 200 }),
+    fetch: fetchStaticAsset,
   },
 };
 
@@ -101,21 +153,43 @@ test('association files report missing deployment configuration without redirect
   assert.equal(appleResponse.headers.get('location'), null);
 });
 
-test('legal page routes pass through to Cloudflare static assets', async () => {
-  const privacyResponse = await handleRequest(request('/privacy/'), config);
-  const termsResponse = await handleRequest(request('/terms'), config);
+test('canonical static routes pass through to existing HTML files', async () => {
+  const routes = ['/', '/terms', '/privacy', '/support', '/delete-account'];
 
-  assert.equal(privacyResponse.status, 200);
-  assert.equal(await privacyResponse.text(), 'static asset');
-  assert.equal(privacyResponse.headers.get('location'), null);
-  assert.equal(termsResponse.status, 200);
-  assert.equal(await termsResponse.text(), 'static asset');
-  assert.equal(termsResponse.headers.get('location'), null);
+  for (const route of routes) {
+    const response = await handleRequest(request(route), config);
+    assert.equal(response.status, 200, route);
+    assert.match(response.headers.get('content-type'), /^text\/html/, route);
+    assert.equal(response.headers.get('location'), null, route);
+    assert.match(await response.text(), /<html\b/i, route);
+  }
 });
 
-test('unknown routes retain static-host behavior', async () => {
-  const response = await handleRequest(request('/privacy.html'), config);
+test('legacy HTML routes retain Cloudflare clean-URL compatibility', async () => {
+  const routes = ['/terms.html', '/privacy.html', '/support.html', '/delete-account.html'];
 
-  assert.equal(response.status, 200);
-  assert.equal(await response.text(), 'static asset');
+  for (const route of routes) {
+    const response = await handleRequest(request(route), config);
+    assert.equal(response.status, 308, route);
+    assert.equal(
+      response.headers.get('location'),
+      `https://mirrortrips.com${route.slice(0, -5)}`,
+      route,
+    );
+
+    const redirectedPath = new URL(response.headers.get('location')).pathname;
+    const destination = await handleRequest(request(redirectedPath), config);
+    assert.equal(destination.status, 200, `${route} destination`);
+    assert.equal(destination.headers.get('location'), null, `${route} redirect loop`);
+  }
+});
+
+test('referenced static assets pass through and missing routes return 404', async () => {
+  for (const route of ['/styles.css', '/script.js', '/assets/mt.png', '/assets/favicon.png']) {
+    const response = await handleRequest(request(route), config);
+    assert.equal(response.status, 200, route);
+  }
+
+  const response = await handleRequest(request('/not-a-real-page'), config);
+  assert.equal(response.status, 404);
 });

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "npx wrangler pages dev public",
     "test": "node --test",
     "verify:config": "node scripts/verify-config.js"
   },

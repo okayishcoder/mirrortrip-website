@@ -12,11 +12,11 @@
     Array.prototype.forEach.call(siteNav.querySelectorAll('a'), function (link) {
       var href = link.getAttribute('href');
       if (
-        (page === 'home' && href === 'index.html') ||
-        (page === 'privacy' && href === 'privacy.html') ||
-        (page === 'terms' && href === 'terms.html') ||
-        (page === 'support' && href === 'support.html') ||
-        (page === 'delete' && href === 'delete-account.html')
+        (page === 'home' && href === '/') ||
+        (page === 'privacy' && href === '/privacy') ||
+        (page === 'terms' && href === '/terms') ||
+        (page === 'support' && href === '/support') ||
+        (page === 'delete' && href === '/delete-account')
       ) {
         link.setAttribute('aria-current', 'page');
       }
