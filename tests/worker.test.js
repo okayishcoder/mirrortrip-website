@@ -4,9 +4,10 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { handleRequest } from '../_worker.js';
+import { handleRequest } from '../public/_worker.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const publicRoot = path.join(root, 'public');
 const contentTypes = new Map([
   ['.css', 'text/css; charset=utf-8'],
   ['.html', 'text/html; charset=utf-8'],
@@ -36,8 +37,8 @@ async function fetchStaticAsset(request) {
     : pathname.slice(1).includes('.')
       ? pathname.slice(1)
       : `${pathname.slice(1)}.html`;
-  const resolvedPath = path.resolve(root, relativePath);
-  if (!resolvedPath.startsWith(`${root}${path.sep}`)) {
+  const resolvedPath = path.resolve(publicRoot, relativePath);
+  if (!resolvedPath.startsWith(`${publicRoot}${path.sep}`)) {
     return new Response('Not Found', { status: 404 });
   }
 
@@ -175,6 +176,11 @@ test('legacy HTML routes retain Cloudflare clean-URL compatibility', async () =>
       `https://mirrortrips.com${route.slice(0, -5)}`,
       route,
     );
+
+    const redirectedPath = new URL(response.headers.get('location')).pathname;
+    const destination = await handleRequest(request(redirectedPath), config);
+    assert.equal(destination.status, 200, `${route} destination`);
+    assert.equal(destination.headers.get('location'), null, `${route} redirect loop`);
   }
 });
 

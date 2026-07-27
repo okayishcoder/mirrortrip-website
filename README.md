@@ -1,51 +1,64 @@
 # Mirror Trip Website
 
-Plain static HTML website hosted on Cloudflare Pages, with a Pages Worker for
-mobile share-link fallbacks and app-association files. There is no framework,
-build step, CMS, or database.
+Plain static HTML website hosted on Cloudflare Pages, with a Pages advanced-mode
+Worker for mobile share-link fallbacks and app-association files. There is no
+framework, build step, CMS, or database.
 
-## Files that matter most
+## Repository structure
 
-- `index.html`: landing page and public app overview
-- `terms.html`: published Terms of Service
-- `privacy.html`: published privacy policy
-- `support.html`: support and contact page
-- `delete-account.html`: public account deletion information
-- `styles.css`: shared design system and page styling
-- `script.js`: lightweight navigation and active-link behavior
-- `assets/mt.png`: copied app brand asset used for the site icon and favicon
-- `_worker.js`: Cloudflare Pages edge routing for share links and app-association files
-- `tests/site.test.js`: static files, links, asset references, and metadata checks
-- `tests/worker.test.js`: static route, share route, crawler, and association checks
+```text
+.
+|-- public/                    # The only Cloudflare Pages deployment directory
+|   |-- _worker.js             # Advanced-mode Pages Worker
+|   |-- index.html
+|   |-- terms.html
+|   |-- privacy.html
+|   |-- support.html
+|   |-- delete-account.html
+|   |-- styles.css
+|   |-- script.js
+|   `-- assets/
+|       |-- mt.png
+|       `-- favicon.png
+|-- scripts/
+|   `-- verify-config.js       # Repository-only configuration check
+|-- tests/                     # Repository-only Node tests
+|-- README.md
+|-- package.json
+`-- legal-archive/             # Future repository-only content; never deploy
+```
+
+Only files under `public/` are deployment artifacts. Tests, documentation,
+package files, local configuration, development tooling, logs, and the future
+`legal-archive/` directory belong outside `public/`.
 
 ## Public routes
 
-The public, canonical page routes are:
-
 | Page | Canonical route | Source file |
 | --- | --- | --- |
-| Home | `/` | `index.html` |
-| Terms | `/terms` | `terms.html` |
-| Privacy | `/privacy` | `privacy.html` |
-| Support | `/support` | `support.html` |
-| Delete account | `/delete-account` | `delete-account.html` |
+| Home | `/` | `public/index.html` |
+| Terms | `/terms` | `public/terms.html` |
+| Privacy | `/privacy` | `public/privacy.html` |
+| Support | `/support` | `public/support.html` |
+| Delete account | `/delete-account` | `public/delete-account.html` |
 
-Cloudflare Pages serves matching HTML files at extensionless URLs. Its default
-clean-URL handling redirects legacy `.html` requests such as `/terms.html` to
-their extensionless form such as `/terms`. The HTML files remain in the static
-site and `_worker.js` passes these requests through to the Pages asset binding.
+Cloudflare Pages clean URLs serve the HTML files at extensionless routes and
+redirect legacy `.html` requests to their canonical forms. The Worker passes
+both forms through to the Pages asset binding.
 
-## Local preview
+## Local development and tests
 
-The informational pages remain plain static files. Use the Cloudflare preview
-for route-sensitive work so extensionless routing and Worker behavior are
-included:
+Use the Cloudflare Pages preview so clean URLs, the advanced-mode Worker, its
+`ASSETS` binding, and association routes are included:
 
 ```powershell
-npx wrangler pages dev .
+npm run dev
 ```
 
-Run all lightweight static-site and Worker verification with:
+This runs `npx wrangler pages dev public`.
+
+Run all static-site, deployment-boundary, asset, route, redirect, Worker, and
+association-file verification with:
 
 ```powershell
 npm test
@@ -57,8 +70,8 @@ Check that required deployment variables are present with:
 npm run verify:config
 ```
 
-For local Worker configuration, create `.dev.vars` or use environment variables
-without committing their values.
+For local Worker configuration, create `.dev.vars` or provide environment
+variables without committing their values.
 
 ## Local configuration safety
 
@@ -71,7 +84,7 @@ The repository ignores:
 - `.wrangler/`
 - `node_modules/`
 
-Never place configuration values in tests, documentation, or logs.
+Never place configuration values in `public/`, tests, documentation, or logs.
 
 ## Share-link configuration
 
@@ -92,31 +105,60 @@ app IDs such as `TEAMID.com.mt.mtclient.preview`. Multiple Android fingerprints
 can be supplied as a comma-separated `ANDROID_SHA256_FINGERPRINT` value only
 when those builds are intentionally authorized.
 
-Run `npm run verify:config` in an environment containing the deployment values
-to catch missing configuration.
+## Cloudflare Pages deployment
 
-## Deployment
+The Pages project remains framework-free and dashboard-configured:
 
-The share route requires a host capable of edge/server rewrites. GitHub Pages
-cannot return HTTP 200 for arbitrary `/t/{publicShareId}` paths, so production
-must use Cloudflare Pages (or an equivalent host adapted to run `_worker.js`).
+| Setting | Value |
+| --- | --- |
+| Framework preset | None |
+| Build command | Leave blank |
+| Build output directory | `public` |
+| Root directory | Repository root |
 
-1. Create a Cloudflare Pages project connected to this repository.
-2. Use no framework preset and no build command. Set the output directory to `.`.
-3. Add all required environment variables for production and preview.
-4. Attach `mirrortrips.com` as the Pages custom domain.
-5. Remove or replace the current GitHub Pages DNS records as Cloudflare directs.
-6. Keep the exact app-link hostname as `mirrortrips.com`; do not redirect its
-   association-file requests to `www` or another hostname.
-7. Deploy and run the verification commands below.
+The required manual migration is to change the existing Cloudflare Pages build
+output directory from `.` to `public` before deploying the commit that moves the
+files. Do not change the project root to `public`: doing so would make the
+dashboard output path ambiguous and would exclude repository-level tooling from
+the build environment.
 
-Cloudflare Pages serves static pages through `env.ASSETS`. `_worker.js` handles
-only `/.well-known/*`, `/t`, and `/t/*`; all page, asset, legacy `.html`, and
-unknown requests pass through to Cloudflare's static asset handling.
+`public/_worker.js` must be inside the configured output directory because
+Cloudflare Pages advanced mode discovers `_worker.js` there. It controls all
+incoming requests and delegates ordinary pages, assets, legacy `.html` URLs,
+and unknown routes to `env.ASSETS.fetch(request)`. It directly handles only:
+
+- `/.well-known/apple-app-site-association`
+- `/.well-known/assetlinks.json`
+- `/t`
+- `/t/`
+- `/t/*`
+
+Keep the exact app-link hostname as `mirrortrips.com`; do not redirect its
+association-file requests to `www` or another hostname.
+
+## Deployment migration order
+
+1. Run `npm test` on the restructuring commit.
+2. In Cloudflare Pages, change the build output directory from `.` to `public`;
+   keep the framework preset unset, build command blank, and root at the
+   repository root.
+3. Confirm production and preview environment-variable names are still present.
+4. Deploy the restructuring commit.
+5. Verify the canonical routes, legacy redirects, static assets, association
+   files, and `/t/testPublicShareId` on the `pages.dev` preview URL.
+6. Verify the same routes on `https://mirrortrips.com`.
+
+Deploying the file move while the output directory is still `.` could expose
+repository-only files. Changing the output directory too early, before a commit
+containing `public/` is available to the selected branch, could produce an empty
+or failed deployment. Coordinate the setting change and deployment together.
 
 ## Production verification
 
 ```powershell
+curl.exe -i https://mirrortrips.com/
+curl.exe -i https://mirrortrips.com/terms
+curl.exe -i https://mirrortrips.com/terms.html
 curl.exe -i https://mirrortrips.com/.well-known/apple-app-site-association
 curl.exe -i https://mirrortrips.com/.well-known/assetlinks.json
 curl.exe -i https://mirrortrips.com/t/testPublicShareId
@@ -125,21 +167,19 @@ curl.exe -i -A "facebookexternalhit/1.1" https://mirrortrips.com/t/testPublicSha
 
 Expected results:
 
-- Association files return `200`, do not include `Location`, use
-  `application/json`, and parse as JSON.
-- The trip route returns `200` and `text/html` for a valid identifier.
-- The crawler request returns HTML containing Open Graph metadata and does not
-  redirect.
+- Canonical page routes return `200` HTML without a `Location` header.
+- Legacy `.html` routes redirect once to the extensionless route.
+- Association files return `200`, no `Location`, `application/json`, and valid
+  JSON.
+- A valid trip route returns `200` HTML with its exact canonical URL.
+- A crawler trip request keeps Open Graph metadata and does not redirect.
 - `/t/` and malformed identifiers return a branded `400` page.
-- `/`, `/terms`, `/privacy`, `/support`, and `/delete-account` return their
-  static HTML pages.
-- Legacy `.html` page URLs redirect to the corresponding extensionless
-  canonical routes without a loop.
+- Referenced styles, scripts, and images return `200`.
 
 ## Link-preview scope
 
 The edge route renders generic Mirror Trip Open Graph metadata and an exact
 canonical URL for each shared path. It does not call the trip API. Dynamic trip
 titles and images would require a secure server-side public-trip lookup in the
-worker (or a dedicated metadata endpoint); client-side fetching is intentionally
+Worker (or a dedicated metadata endpoint); client-side fetching is intentionally
 not used because social crawlers generally do not execute it.
