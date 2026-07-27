@@ -1,10 +1,13 @@
 # Mirror Trip Website
 
-Public website and mobile share-link fallback for Mirror Trip.
+Plain static HTML website hosted on Cloudflare Pages, with a Pages Worker for
+mobile share-link fallbacks and app-association files. There is no framework,
+build step, CMS, or database.
 
 ## Files that matter most
 
 - `index.html`: landing page and public app overview
+- `terms.html`: published Terms of Service
 - `privacy.html`: published privacy policy
 - `support.html`: support and contact page
 - `delete-account.html`: public account deletion information
@@ -12,25 +15,63 @@ Public website and mobile share-link fallback for Mirror Trip.
 - `script.js`: lightweight navigation and active-link behavior
 - `assets/mt.png`: copied app brand asset used for the site icon and favicon
 - `_worker.js`: Cloudflare Pages edge routing for share links and app-association files
-- `tests/worker.test.js`: route, metadata, platform, crawler, and association checks
+- `tests/site.test.js`: static files, links, asset references, and metadata checks
+- `tests/worker.test.js`: static route, share route, crawler, and association checks
+
+## Public routes
+
+The public, canonical page routes are:
+
+| Page | Canonical route | Source file |
+| --- | --- | --- |
+| Home | `/` | `index.html` |
+| Terms | `/terms` | `terms.html` |
+| Privacy | `/privacy` | `privacy.html` |
+| Support | `/support` | `support.html` |
+| Delete account | `/delete-account` | `delete-account.html` |
+
+Cloudflare Pages serves matching HTML files at extensionless URLs. Its default
+clean-URL handling redirects legacy `.html` requests such as `/terms.html` to
+their extensionless form such as `/terms`. The HTML files remain in the static
+site and `_worker.js` passes these requests through to the Pages asset binding.
 
 ## Local preview
 
-The informational pages remain plain static files. Open `index.html` directly for visual work.
-
-Run the automated edge-route tests with:
-
-```powershell
-npm test
-```
-
-For a full local Cloudflare Pages preview, install Wrangler and run:
+The informational pages remain plain static files. Use the Cloudflare preview
+for route-sensitive work so extensionless routing and Worker behavior are
+included:
 
 ```powershell
 npx wrangler pages dev .
 ```
 
-Copy `.dev.vars.example` to `.dev.vars` and fill every required value first.
+Run all lightweight static-site and Worker verification with:
+
+```powershell
+npm test
+```
+
+Check that required deployment variables are present with:
+
+```powershell
+npm run verify:config
+```
+
+For local Worker configuration, create `.dev.vars` or use environment variables
+without committing their values.
+
+## Local configuration safety
+
+Local configuration and generated tooling directories must not be committed.
+The repository ignores:
+
+- `.dev.vars`
+- `.env`
+- `.env.*`
+- `.wrangler/`
+- `node_modules/`
+
+Never place configuration values in tests, documentation, or logs.
 
 ## Share-link configuration
 
@@ -70,8 +111,8 @@ must use Cloudflare Pages (or an equivalent host adapted to run `_worker.js`).
 7. Deploy and run the verification commands below.
 
 Cloudflare Pages serves static pages through `env.ASSETS`. `_worker.js` handles
-only `/.well-known/*`, `/t`, and `/t/*`, so unknown routes retain the current
-static-host behavior.
+only `/.well-known/*`, `/t`, and `/t/*`; all page, asset, legacy `.html`, and
+unknown requests pass through to Cloudflare's static asset handling.
 
 ## Production verification
 
@@ -90,6 +131,10 @@ Expected results:
 - The crawler request returns HTML containing Open Graph metadata and does not
   redirect.
 - `/t/` and malformed identifiers return a branded `400` page.
+- `/`, `/terms`, `/privacy`, `/support`, and `/delete-account` return their
+  static HTML pages.
+- Legacy `.html` page URLs redirect to the corresponding extensionless
+  canonical routes without a loop.
 
 ## Link-preview scope
 
