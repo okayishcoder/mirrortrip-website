@@ -16,6 +16,7 @@ const pages = new Map([
 const canonicalRoutes = new Set(pages.values());
 const requiredPublicFiles = [
   '_worker.js',
+  '404.html',
   'index.html',
   'terms.html',
   'privacy.html',

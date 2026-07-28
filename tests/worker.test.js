@@ -193,3 +193,20 @@ test('referenced static assets pass through and missing routes return 404', asyn
   const response = await handleRequest(request('/not-a-real-page'), config);
   assert.equal(response.status, 404);
 });
+
+test('guessed legal archive routes are not publicly accessible', async () => {
+  const routes = [
+    '/legal-archive',
+    '/legal-archive/',
+    '/legal-archive/terms/2026-07-20.html',
+    '/legal-archive/privacy/2026-07-20.html',
+    '/terms/2026-07-20',
+    '/privacy/2026-07-20',
+  ];
+
+  for (const route of routes) {
+    const response = await handleRequest(request(route), config);
+    assert.equal(response.status, 404, route);
+    assert.equal(response.headers.get('location'), null, route);
+  }
+});
