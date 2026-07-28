@@ -55,6 +55,10 @@ The current public legal pages are `public/terms.html` and
 deploys only `public/`; archived snapshots must never be copied there or exposed
 through public routes.
 
+Follow the [legal document publishing procedure](legal-archive/README.md) for
+minor corrections, meaningful updates, archive timing, and the required
+website-before-backend deployment order.
+
 ## Local development and tests
 
 Use the Cloudflare Pages preview so clean URLs, the advanced-mode Worker, its
