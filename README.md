@@ -10,6 +10,7 @@ framework, build step, CMS, or database.
 .
 |-- public/                    # The only Cloudflare Pages deployment directory
 |   |-- _worker.js             # Advanced-mode Pages Worker
+|   |-- 404.html               # Prevents Pages SPA fallback for unknown routes
 |   |-- index.html
 |   |-- terms.html
 |   |-- privacy.html
@@ -25,11 +26,11 @@ framework, build step, CMS, or database.
 |-- tests/                     # Repository-only Node tests
 |-- README.md
 |-- package.json
-`-- legal-archive/             # Future repository-only content; never deploy
+`-- legal-archive/             # Repository-only legal snapshots; never deploy
 ```
 
 Only files under `public/` are deployment artifacts. Tests, documentation,
-package files, local configuration, development tooling, logs, and the future
+package files, local configuration, development tooling, logs, and the
 `legal-archive/` directory belong outside `public/`.
 
 ## Public routes
@@ -45,6 +46,14 @@ package files, local configuration, development tooling, logs, and the future
 Cloudflare Pages clean URLs serve the HTML files at extensionless routes and
 redirect legacy `.html` requests to their canonical forms. The Worker passes
 both forms through to the Pages asset binding.
+
+## Legal documents
+
+The current public legal pages are `public/terms.html` and
+`public/privacy.html`. Internal historical snapshots live under
+`legal-archive/` and are retained in Git for developers only. Cloudflare Pages
+deploys only `public/`; archived snapshots must never be copied there or exposed
+through public routes.
 
 ## Local development and tests
 
