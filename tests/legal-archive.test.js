@@ -7,16 +7,18 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicRoot = path.join(root, 'public');
 const archiveRoot = path.join(root, 'legal-archive');
-const snapshots = [
-  {
+const legalDocuments = new Map([
+  ['terms', {
     publicFile: path.join(publicRoot, 'terms.html'),
-    archiveFile: path.join(archiveRoot, 'terms', '2026-07-20.html'),
-  },
-  {
+    currentSnapshot: path.join(archiveRoot, 'terms', '2026-07-20.html'),
+  }],
+  ['privacy', {
     publicFile: path.join(publicRoot, 'privacy.html'),
-    archiveFile: path.join(archiveRoot, 'privacy', '2026-07-20.html'),
-  },
-];
+    currentSnapshot: path.join(archiveRoot, 'privacy', '2026-07-20.html'),
+  }],
+]);
+const archiveFilenamePattern = /^\d{4}-\d{2}-\d{2}\.html$/;
+const publicDatedRoutePattern = /\/(?:terms|privacy)\/\d{4}-\d{2}-\d{2}(?:\.html)?\b/i;
 
 async function filesUnder(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -37,28 +39,71 @@ async function filesUnder(directory) {
 test('legal archive and initial snapshots exist outside public', async () => {
   assert.equal(path.relative(publicRoot, archiveRoot), path.join('..', 'legal-archive'));
   await access(path.join(archiveRoot, 'README.md'));
-  await Promise.all(snapshots.map(({ archiveFile }) => access(archiveFile)));
+  await Promise.all([...legalDocuments.values()].flatMap(({ publicFile, currentSnapshot }) => [
+    access(publicFile),
+    access(currentSnapshot),
+  ]));
 });
 
-test('initial snapshots exactly match the current public legal documents', async () => {
-  for (const { publicFile, archiveFile } of snapshots) {
-    const [publicContents, archiveContents] = await Promise.all([
-      readFile(publicFile),
-      readFile(archiveFile),
-    ]);
-    assert.deepEqual(archiveContents, publicContents, archiveFile);
+test('Terms and Privacy archives are independent and use dated HTML filenames', async () => {
+  const archiveEntries = await readdir(archiveRoot, { withFileTypes: true });
+  const archiveDirectories = archiveEntries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+
+  assert.deepEqual(archiveDirectories, [...legalDocuments.keys()].sort());
+
+  for (const document of legalDocuments.keys()) {
+    const entries = await readdir(path.join(archiveRoot, document), { withFileTypes: true });
+    assert.ok(entries.length > 0, `${document} archive must not be empty`);
+
+    for (const entry of entries) {
+      assert.ok(entry.isFile(), `${document}/${entry.name} must be a file`);
+      assert.match(entry.name, archiveFilenamePattern, `${document}/${entry.name}`);
+
+      const date = entry.name.slice(0, -5);
+      assert.equal(
+        new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10),
+        date,
+        `${document}/${entry.name} must contain a valid calendar date`,
+      );
+    }
   }
 });
 
 test('public deployment contains no legal archive directory or references', async () => {
   await assert.rejects(access(path.join(publicRoot, 'legal-archive')), { code: 'ENOENT' });
+  await assert.rejects(
+    access(path.join(publicRoot, 'legal', 'manifest.json')),
+    { code: 'ENOENT' },
+  );
 
   const publicTextFiles = (await filesUnder(publicRoot)).filter((filename) => (
     ['.css', '.html', '.js', '.json', '.txt', '.xml'].includes(path.extname(filename))
   ));
 
   for (const filename of publicTextFiles) {
-    assert.doesNotMatch(await readFile(filename, 'utf8'), /legal-archive/i, filename);
+    const contents = await readFile(filename, 'utf8');
+    assert.doesNotMatch(contents, /legal-archive/i, filename);
+    assert.doesNotMatch(contents, /\/legal\/manifest\.json/i, filename);
+  }
+});
+
+test('public deployment contains no dated Terms or Privacy routes or references', async () => {
+  const publicFiles = await filesUnder(publicRoot);
+
+  for (const filename of publicFiles) {
+    const publicPath = `/${path.relative(publicRoot, filename).replaceAll(path.sep, '/')}`;
+    assert.doesNotMatch(publicPath, publicDatedRoutePattern, publicPath);
+
+    if (['.css', '.html', '.js', '.json', '.txt', '.xml'].includes(path.extname(filename))) {
+      assert.doesNotMatch(
+        await readFile(filename, 'utf8'),
+        publicDatedRoutePattern,
+        filename,
+      );
+    }
   }
 });
 
