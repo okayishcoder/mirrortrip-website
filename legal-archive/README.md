@@ -26,10 +26,12 @@ legal-archive/privacy/YYYY-MM-DD.html
 The filename must be a valid date in `YYYY-MM-DD` form. Terms and Privacy are
 separate documents with independent versions and update schedules.
 
-Before replacing a current public document, confirm that the outgoing document
-has an exact snapshot under its currently active backend version. Once an
-archived snapshot has been committed, never edit or overwrite it. A later
-version must be added as a new file.
+Every version activated by the backend should have a snapshot of the public
+document that was introduced for that version. Before replacing a current
+public document, confirm that the outgoing version has an exact snapshot. Once
+an archived snapshot has been committed, never edit or overwrite it. A later
+version must be added as a new file. Git history records any later non-material
+corrections made to the stable public page while its version remains unchanged.
 
 ## Choose the update category
 
@@ -68,18 +70,14 @@ For the affected document:
    `public/terms.html` or `public/privacy.html`.
 5. Change the displayed `Last updated` date to the new version date.
 6. Use that date in `YYYY-MM-DD` form as the new technical backend version.
-7. Run the repository tests and deploy the website first.
-8. Verify the affected public page at `/terms` or `/privacy`, including its
+7. Add an identical dated archive snapshot for the incoming version before deployment.
+8. Run the repository tests and deploy the website first.
+9. Verify the affected public page at `/terms` or `/privacy`, including its
    canonical metadata and legacy `.html` redirect.
-9. Only after the website is live and verified, update and deploy the
+10. Only after the website is live and verified, update and deploy the
    corresponding backend version.
-10. Keep Terms and Privacy independent. A change to one must not change the
+11. Keep Terms and Privacy independent. A change to one must not change the
     other document's backend version or acceptance state.
-
-Do not create a new archive file for the incoming version until it is the
-outgoing current document for a later meaningful update. This keeps each
-snapshot tied to the actual public document that was active for that backend
-version.
 
 ## Backend responsibility and deployment order
 
@@ -101,14 +99,17 @@ change in this repository.
 
 ## Mobile app behavior
 
-The mobile app always opens the stable canonical URLs:
+The shared legal-link flow uses the stable canonical URLs:
 
 - `https://mirrortrips.com/terms`
 - `https://mirrortrips.com/privacy`
 
-Ordinary legal-content updates do not require a new mobile app release because
-these URLs remain stable. Legal versions are fetched from the backend and are
-not hardcoded in the app.
+Ordinary legal-content updates to those linked surfaces do not require a new
+mobile app release because the URLs remain stable. Legal versions are fetched
+from the backend and are not hardcoded in the app. As of 2026-08-04, the mobile
+sign-in footer is a documented exception: it still renders bundled Terms text.
+The mobile known-issues document tracks migration of that remaining consumer to
+the shared canonical-link flow.
 
 ## Verification checklist
 
@@ -118,8 +119,8 @@ Before merging or deploying a legal-document change:
 - Confirm `public/terms.html` and `public/privacy.html` still exist.
 - Confirm the outgoing meaningful version has an immutable archive snapshot.
 - Confirm archive filenames follow `YYYY-MM-DD.html`.
-- Confirm the displayed date and proposed backend version agree for a
-  meaningful update.
+- For a meaningful update, confirm the incoming public file and new dated archive snapshot are identical before deployment.
+- Confirm the displayed date, archive filename, and proposed backend version agree for a meaningful update.
 - Confirm shared assets and navigation use root-relative paths.
 - Confirm canonical and Open Graph URLs remain extensionless.
 - Confirm there are no public archive links, dated legal routes, or manifest.

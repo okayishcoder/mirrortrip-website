@@ -1,5 +1,9 @@
 # Mirror Trip Website
 
+Maintained architecture, public-sharing, legal-publishing, deployment, and documentation-governance references are indexed in [docs/README.md](docs/README.md).
+
+Before opening a pull request, run `npm run docs:check` and complete the documentation-impact section of the PR template. The `Documentation Guard` workflow reports source-to-document drift rules from `docs/docs-policy.json`; treat a failed check as a maintainer-enforced no-merge condition.
+
 Plain static HTML website hosted on Cloudflare Pages, with a Pages advanced-mode
 Worker for mobile share-link fallbacks and app-association files. There is no
 framework, build step, CMS, or database.
@@ -120,7 +124,7 @@ when those builds are intentionally authorized.
 
 ## Cloudflare Pages deployment
 
-The Pages project remains framework-free and dashboard-configured:
+The Pages project must use these external dashboard settings:
 
 | Setting | Value |
 | --- | --- |
@@ -129,11 +133,9 @@ The Pages project remains framework-free and dashboard-configured:
 | Build output directory | `public` |
 | Root directory | Repository root |
 
-The required manual migration is to change the existing Cloudflare Pages build
-output directory from `.` to `public` before deploying the commit that moves the
-files. Do not change the project root to `public`: doing so would make the
-dashboard output path ambiguous and would exclude repository-level tooling from
-the build environment.
+Repository source cannot confirm the live Cloudflare dashboard values. Verify
+them before deployment. Do not set the project root to `public`; keep the root
+at the repository root and the output directory at `public`.
 
 `public/_worker.js` must be inside the configured output directory because
 Cloudflare Pages advanced mode discovers `_worker.js` there. It controls all
@@ -149,22 +151,13 @@ and unknown routes to `env.ASSETS.fetch(request)`. It directly handles only:
 Keep the exact app-link hostname as `mirrortrips.com`; do not redirect its
 association-file requests to `www` or another hostname.
 
-## Deployment migration order
+## Deployment procedure
 
-1. Run `npm test` on the restructuring commit.
-2. In Cloudflare Pages, change the build output directory from `.` to `public`;
-   keep the framework preset unset, build command blank, and root at the
-   repository root.
-3. Confirm production and preview environment-variable names are still present.
-4. Deploy the restructuring commit.
-5. Verify the canonical routes, legacy redirects, static assets, association
-   files, and `/t/testPublicShareId` on the `pages.dev` preview URL.
-6. Verify the same routes on `https://mirrortrips.com`.
-
-Deploying the file move while the output directory is still `.` could expose
-repository-only files. Changing the output directory too early, before a commit
-containing `public/` is available to the selected branch, could produce an empty
-or failed deployment. Coordinate the setting change and deployment together.
+1. Run `npm run docs:check` and `npm test`.
+2. Run `npm run verify:config` with the intended environment-variable names available.
+3. Confirm the external Pages settings still use repository root plus `public` output.
+4. Deploy to a Pages preview and verify canonical routes, legacy redirects, assets, association files, malformed links, and crawler behavior.
+5. Promote to production and repeat the checks on `https://mirrortrips.com`.
 
 ## Production verification
 

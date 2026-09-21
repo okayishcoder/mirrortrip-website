@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx wrangler pages dev public",
+    "docs:check": "node scripts/check-docs.mjs",
+    "docs:pr-check": "node scripts/check-pr-docs.mjs",
     "test": "node --test",
     "verify:config": "node scripts/verify-config.js"
   },
