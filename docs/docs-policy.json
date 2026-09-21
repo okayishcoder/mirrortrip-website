@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "requiredDocuments": [
+    "docs/README.md",
+    "docs/architecture.md",
+    "docs/public-sharing.md",
+    "docs/legal-publishing.md",
+    "docs/deployment.md",
+    "docs/documentation-policy.md"
+  ],
+  "rules": [
+    {
+      "name": "Worker routing and association contract",
+      "sources": ["public/_worker.js", "scripts/verify-config.js", "tests/worker.test.js"],
+      "documents": ["docs/public-sharing.md", "docs/deployment.md"]
+    },
+    {
+      "name": "legal publication contract",
+      "sources": ["public/terms.html", "public/privacy.html", "legal-archive/**", "tests/legal-archive.test.js"],
+      "documents": ["docs/legal-publishing.md"]
+    },
+    {
+      "name": "public site structure",
+      "sources": ["public/index.html", "public/404.html", "public/support.html", "public/delete-account.html", "public/styles.css", "public/script.js", "public/assets/**", "tests/site.test.js", "README.md", "package.json"],
+      "documents": ["docs/architecture.md", "docs/deployment.md"]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ const legalDocuments = new Map([
   }],
   ['privacy', {
     publicFile: path.join(publicRoot, 'privacy.html'),
-    currentSnapshot: path.join(archiveRoot, 'privacy', '2026-07-20.html'),
+    currentSnapshot: path.join(archiveRoot, 'privacy', '2026-09-21.html'),
   }],
 ]);
 const archiveFilenamePattern = /^\d{4}-\d{2}-\d{2}\.html$/;
@@ -69,6 +69,16 @@ test('Terms and Privacy archives are independent and use dated HTML filenames', 
         `${document}/${entry.name} must contain a valid calendar date`,
       );
     }
+  }
+});
+
+test('current public legal documents match their active dated snapshots', async () => {
+  for (const [document, { publicFile, currentSnapshot }] of legalDocuments) {
+    assert.equal(
+      await readFile(publicFile, 'utf8'),
+      await readFile(currentSnapshot, 'utf8'),
+      `${document} public document must match its active archive snapshot`,
+    );
   }
 });
 
